@@ -409,21 +409,20 @@ function downloadPDFBytes(pdfBytes, filename) {
     const blob = new Blob([pdfBytes], { type: 'application/pdf' });
     const url = URL.createObjectURL(blob);
 
-    // 手機端：在新分頁開啟（解決 LINE 瀏覽器問題）
-    if (/Mobi|Android/i.test(navigator.userAgent)) {
-        window.open(url, '_blank');
-        // 延遲釋放 URL
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-    } else {
-        // 桌面端：下載
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
+    // 創建連結
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+
+    // 強制所有瀏覽器在新分頁開啟（嘗試解決 LINE 等通訊軟體內建瀏覽器的問題）
+    a.target = '_blank';
+
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    // 延長 URL 有效期至 60 秒，確保新頁面有足夠時間載入
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
 }
 
 function removeFile(fileId) {
