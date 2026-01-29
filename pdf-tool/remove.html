@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF 密碼移除工具 - Shuo Tools</title>
+    <meta name="description" content="快速移除 PDF 文件密碼，支援批次處理與合併">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../templatemo-electric-xtra.css">
+    <link rel="stylesheet" href="remove.css">
+</head>
+
+<body>
+    <div class="grid-bg"></div>
+    <div class="gradient-overlay"></div>
+    <div class="shapes-container">
+        <div class="shape shape-circle"></div>
+        <div class="shape shape-triangle"></div>
+        <div class="shape shape-square"></div>
+    </div>
+
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="logo-link">
+                <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 10L90 30V70L50 90L10 70V30L50 10Z" stroke="url(#gradient)" stroke-width="3"
+                        fill="none" />
+                    <circle cx="50" cy="50" r="15" fill="url(#gradient)" />
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#FF5E00" />
+                            <stop offset="100%" style="stop-color:#00B2FF" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span class="logo-text">SHUO</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html">返回首頁</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="tool-section">
+        <div class="tool-container">
+            <h1 class="section-title">PDF 密碼移除工具</h1>
+            <p class="tool-subtitle">支援多文件批次處理與合併</p>
+
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-content">
+                    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p class="upload-text">拖放 PDF 文件或點擊選擇</p>
+                    <p class="upload-hint">支援多個文件同時上傳</p>
+                </div>
+                <input type="file" id="fileInput" accept=".pdf" multiple hidden>
+            </div>
+
+            <div class="files-container" id="filesContainer" style="display: none;">
+                <div class="files-header">
+                    <h3>已上傳的文件 (<span id="fileCount">0</span>)</h3>
+                    <button class="add-more-btn" id="addMoreBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        新增文件
+                    </button>
+                </div>
+
+                <div class="unified-password" id="unifiedPasswordSection" style="display: none;">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="useUnifiedPassword">
+                        <span>所有文件使用相同密碼</span>
+                    </label>
+                    <input type="password" id="unifiedPasswordInput" placeholder="輸入統一密碼" class="password-input"
+                        disabled>
+                </div>
+
+                <div class="files-list" id="filesList"></div>
+
+                <div class="actions-panel">
+                    <button class="cta-button cta-primary" id="unlockAllBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                        </svg>
+                        解鎖所有文件
+                    </button>
+
+                    <div class="download-mode" id="downloadModeSection" style="display: none;">
+                        <span class="mode-label">檔案分別下載</span>
+                        <label class="switch">
+                            <input type="checkbox" id="mergeSwitch">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="mode-label">檔案合併下載</span>
+                    </div>
+
+                    <button class="cta-button cta-secondary" id="downloadAllBtn" disabled>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        下載文件
+                    </button>
+                </div>
+            </div>
+
+            <div class="privacy-notice">
+                所有處理均在瀏覽器本地完成，文件不會上傳至伺服器
+            </div>
+        </div>
+    </section>
+
+    <div class="pdf-preview" id="pdfPreview" style="display: none;">
+        <div class="preview-container">
+            <div class="preview-header">
+                <h3>PDF 預覽</h3>
+                <button class="close-preview" id="closePreview">×</button>
+            </div>
+            <canvas id="pdfCanvas"></canvas>
+            <div class="preview-controls">
+                <button id="prevPage" class="preview-btn">上一頁</button>
+                <span id="pageInfo">第 1 頁 / 共 1 頁</span>
+                <button id="nextPage" class="preview-btn">下一頁</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="progress-overlay" id="progressOverlay" style="display: none;">
+        <div class="progress-content">
+            <div class="spinner"></div>
+            <p class="progress-text" id="progressText">處理中...</p>
+            <p class="progress-detail" id="progressDetail"></p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://unpkg.com/@cantoo/pdf-lib@1.17.3/dist/pdf-lib.min.js"></script>
+    <script src="remove.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>感謝您的反饋 - Shuo Tools</title>
+    <meta name="description" content="感謝您的寶貴建議">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="templatemo-electric-xtra.css">
+    <link rel="stylesheet" href="css/thank-you.css">
+</head>
+
+<body>
+    <div class="grid-bg"></div>
+    <div class="gradient-overlay"></div>
+    <div class="shapes-container">
+        <div class="shape shape-circle"></div>
+        <div class="shape shape-triangle"></div>
+        <div class="shape shape-square"></div>
+    </div>
+
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo-link">
+                <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 10L90 30V70L50 90L10 70V30L50 10Z" stroke="url(#gradient)" stroke-width="3"
+                        fill="none" />
+                    <circle cx="50" cy="50" r="15" fill="url(#gradient)" />
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#FF5E00" />
+                            <stop offset="100%" style="stop-color:#00B2FF" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span class="logo-text">SHUO</span>
+            </a>
+        </div>
+    </nav>
+
+    <section class="thank-you-section">
+        <div class="thank-you-container">
+            <div class="success-icon">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" stroke="url(#grad-success)" stroke-width="3" />
+                    <path d="M30 50 L45 65 L70 35" stroke="url(#grad-success)" stroke-width="4" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <defs>
+                        <linearGradient id="grad-success" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#FF5E00" />
+                            <stop offset="100%" style="stop-color:#00B2FF" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+
+            <h1 class="thank-you-title">感謝您的反饋</h1>
+            <p class="thank-you-message">我們已收到您的寶貴建議</p>
+            <p class="thank-you-detail">您的意見對我們非常重要，我們會仔細閱讀並考慮每一條建議。</p>
+
+            <div class="countdown-container">
+                <p class="countdown-text">將在 <span id="countdown">5</span> 秒後自動返回首頁</p>
+            </div>
+
+            <div class="action-buttons">
+                <a href="index.html" class="cta-button cta-primary">立即返回首頁</a>
+                <a href="pdf-tool/remove.html" class="cta-button cta-secondary">前往 PDF 工具</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        let countdown = 5;
+        const countdownElement = document.getElementById('countdown');
+
+        const timer = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown;
+
+            if (countdown <= 0) {
+                clearInterval(timer);
+                window.location.href = 'index.html';
+            }
+        }, 1000);
+    </script>
+</body>
+
+</html>
