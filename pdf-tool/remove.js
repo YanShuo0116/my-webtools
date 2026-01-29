@@ -2,8 +2,6 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 
 let files = [];
 let unlockedPdfs = new Map();
-let currentPreviewPdf = null;
-let currentPreviewPage = 1;
 
 const uploadZone = document.getElementById('uploadZone');
 const fileInput = document.getElementById('fileInput');
@@ -18,12 +16,6 @@ const unifiedPasswordInput = document.getElementById('unifiedPasswordInput');
 const unifiedPasswordSection = document.getElementById('unifiedPasswordSection');
 const mergeSwitch = document.getElementById('mergeSwitch');
 const downloadModeSection = document.getElementById('downloadModeSection');
-const pdfPreview = document.getElementById('pdfPreview');
-const pdfCanvas = document.getElementById('pdfCanvas');
-const closePreview = document.getElementById('closePreview');
-const prevPage = document.getElementById('prevPage');
-const nextPage = document.getElementById('nextPage');
-const pageInfo = document.getElementById('pageInfo');
 const progressOverlay = document.getElementById('progressOverlay');
 const progressText = document.getElementById('progressText');
 const progressDetail = document.getElementById('progressDetail');
@@ -68,25 +60,6 @@ useUnifiedPassword.addEventListener('change', function () {
 });
 
 
-
-closePreview.addEventListener('click', () => {
-    pdfPreview.style.display = 'none';
-    currentPreviewPdf = null;
-});
-
-prevPage.addEventListener('click', () => {
-    if (currentPreviewPage > 1) {
-        currentPreviewPage--;
-        renderPreviewPage();
-    }
-});
-
-nextPage.addEventListener('click', () => {
-    if (currentPreviewPdf && currentPreviewPage < currentPreviewPdf.numPages) {
-        currentPreviewPage++;
-        renderPreviewPage();
-    }
-});
 
 function addFiles(newFiles) {
     newFiles.forEach(file => {
@@ -160,7 +133,6 @@ function createFileItem(fileData) {
             fileData.status === 'error' ? 'error' : '';
 
     const showPasswordInput = fileData.needsPassword && fileData.status !== 'unlocked' && !useUnifiedPassword.checked;
-    const showPreviewBtn = fileData.status === 'unlocked' && /Mobi|Android/i.test(navigator.userAgent);
 
     div.innerHTML = `
         <div class="file-header">
@@ -188,9 +160,6 @@ function createFileItem(fileData) {
                        value="${fileData.password}">
                 <button class="unlock-single-btn" onclick="unlockSingleFile(${fileData.id})">解鎖</button>
             </div>
-        ` : ''}
-        ${showPreviewBtn ? `
-            <button class="unlock-single-btn" onclick="previewPDF(${fileData.id})" style="width: 100%; margin-top: 8px;">預覽 PDF</button>
         ` : ''}
         ${fileData.error ? `<div style="color: var(--danger); font-size: 13px; margin-top: 8px;">${fileData.error}</div>` : ''}
     `;
@@ -407,10 +376,6 @@ async function downloadMergedPDF(unlockedFiles) {
         downloadPDFBytes(mergedPdfBytes, 'merged_unlocked.pdf');
 
         hideProgress();
-
-        if (/Mobi|Android/i.test(navigator.userAgent)) {
-            setTimeout(() => previewPDFBytes(mergedPdfBytes), 500);
-        }
     } catch (error) {
         hideProgress();
         alert('合併失敗：' + error.message);
@@ -434,11 +399,6 @@ async function downloadSeparateFiles(unlockedFiles) {
     }
 
     hideProgress();
-
-    if (/Mobi|Android/i.test(navigator.userAgent) && unlockedFiles.length === 1) {
-        const pdfBytes = unlockedPdfs.get(unlockedFiles[0].id);
-        setTimeout(() => previewPDFBytes(pdfBytes), 500);
-    }
 }
 
 function downloadPDFBytes(pdfBytes, filename) {
@@ -452,47 +412,6 @@ function downloadPDFBytes(pdfBytes, filename) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-}
-
-async function previewPDF(fileId) {
-    const pdfBytes = unlockedPdfs.get(fileId);
-    if (!pdfBytes) return;
-
-    await previewPDFBytes(pdfBytes);
-}
-
-async function previewPDFBytes(pdfBytes) {
-    try {
-        const loadingTask = pdfjsLib.getDocument({ data: pdfBytes });
-        currentPreviewPdf = await loadingTask.promise;
-        currentPreviewPage = 1;
-
-        pdfPreview.style.display = 'flex';
-        await renderPreviewPage();
-    } catch (error) {
-        alert('預覽失敗：' + error.message);
-    }
-}
-
-async function renderPreviewPage() {
-    if (!currentPreviewPdf) return;
-
-    const page = await currentPreviewPdf.getPage(currentPreviewPage);
-    const viewport = page.getViewport({ scale: 1.5 });
-
-    const canvas = pdfCanvas;
-    const context = canvas.getContext('2d');
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-
-    await page.render({
-        canvasContext: context,
-        viewport: viewport
-    }).promise;
-
-    pageInfo.textContent = `第 ${currentPreviewPage} 頁 / 共 ${currentPreviewPdf.numPages} 頁`;
-    prevPage.disabled = currentPreviewPage === 1;
-    nextPage.disabled = currentPreviewPage === currentPreviewPdf.numPages;
 }
 
 function removeFile(fileId) {
