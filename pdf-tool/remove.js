@@ -414,19 +414,28 @@ function downloadPDFBytes(pdfBytes, filename) {
     const blob = new Blob([pdfBytes], { type: 'application/pdf' });
     const url = URL.createObjectURL(blob);
 
+    // 針對 LINE 瀏覽器的特殊處理
+    if (/Line/i.test(navigator.userAgent)) {
+        alert('⚠️ 偵測到 LINE 瀏覽器\n\nLINE 可能會阻擋下載。若畫面無反應：\n1. 點擊右上角選單 (⋮)\n2. 選擇「以其他瀏覽器開啟」\n(如 Safari 或 Chrome)');
+
+        // 嘗試強制跳轉 (比 target="_blank" 更有效)
+        window.location.href = url;
+        return;
+    }
+
     // 創建連結
     const a = document.createElement('a');
     a.href = url;
     a.download = filename;
 
-
+    // 強制所有瀏覽器在新分頁開啟
     a.target = '_blank';
 
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
 
-    // 延長 URL 有效期至 60 秒，確保新頁面有足夠時間載入
+    // 延長 URL 有效期至 60 秒
     setTimeout(() => URL.revokeObjectURL(url), 60000);
 }
 
