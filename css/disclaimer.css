@@ -1,0 +1,123 @@
+.disclaimer-section {
+    min-height: 100vh;
+    padding: 120px 20px 60px;
+}
+
+.disclaimer-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 94, 0, 0.2);
+    border-radius: 20px;
+    padding: 50px 40px;
+    backdrop-filter: blur(10px);
+}
+
+.section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 40px;
+    background: linear-gradient(45deg, #FF5E00, #00B2FF);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+}
+
+.disclaimer-content h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    color: #FF5E00;
+}
+
+.disclaimer-content p {
+    line-height: 1.8;
+    margin-bottom: 15px;
+    opacity: 0.9;
+}
+
+.disclaimer-content ul {
+    margin: 15px 0 20px 30px;
+    line-height: 1.8;
+}
+
+.disclaimer-content li {
+    margin-bottom: 8px;
+    opacity: 0.85;
+}
+
+.back-to-home {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255, 94, 0, 0.2);
+}
+
+.cta-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+}
+
+.cta-primary {
+    background: linear-gradient(45deg, #FF5E00, #00B2FF);
+    color: white;
+    box-shadow: 0 0 30px rgba(255, 94, 0, 0.5);
+}
+
+.cta-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 40px rgba(255, 94, 0, 0.6);
+}
+
+.site-footer {
+    background: rgba(0, 0, 0, 0.5);
+    border-top: 1px solid rgba(255, 94, 0, 0.2);
+    padding: 30px 20px;
+    margin-top: 60px;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-bottom {
+    text-align: center;
+}
+
+.footer-bottom p {
+    opacity: 0.6;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .disclaimer-container {
+        padding: 30px 25px;
+    }
+
+    .disclaimer-content h2 {
+        font-size: 1.3rem;
+    }
+
+    .disclaimer-content ul {
+        margin-left: 20px;
+    }
+}
