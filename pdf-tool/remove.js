@@ -2,8 +2,6 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 
 let files = [];
 let unlockedPdfs = new Map();
-let currentPreviewPdf = null;
-let currentPreviewPage = 1;
 
 const uploadZone = document.getElementById('uploadZone');
 const fileInput = document.getElementById('fileInput');
@@ -18,12 +16,6 @@ const unifiedPasswordInput = document.getElementById('unifiedPasswordInput');
 const unifiedPasswordSection = document.getElementById('unifiedPasswordSection');
 const mergeSwitch = document.getElementById('mergeSwitch');
 const downloadModeSection = document.getElementById('downloadModeSection');
-const pdfPreview = document.getElementById('pdfPreview');
-const pdfCanvas = document.getElementById('pdfCanvas');
-const closePreview = document.getElementById('closePreview');
-const prevPage = document.getElementById('prevPage');
-const nextPage = document.getElementById('nextPage');
-const pageInfo = document.getElementById('pageInfo');
 const progressOverlay = document.getElementById('progressOverlay');
 const progressText = document.getElementById('progressText');
 const progressDetail = document.getElementById('progressDetail');
@@ -289,6 +281,10 @@ async function unlockAllFiles() {
         } catch (error) {
             if (error.name === 'PasswordException' || error.message.includes('password')) {
                 fileData.error = '密碼錯誤';
+                // 顯示彈窗提示
+                setTimeout(() => {
+                    alert(`文件 "${fileData.file.name}" 密碼錯誤，請重新輸入`);
+                }, 100);
             } else {
                 fileData.error = '處理失敗：' + error.message;
             }
@@ -384,11 +380,6 @@ async function downloadMergedPDF(unlockedFiles) {
         downloadPDFBytes(mergedPdfBytes, 'merged_unlocked.pdf');
 
         hideProgress();
-
-        // 手機端自動預覽
-        if (/Mobi|Android/i.test(navigator.userAgent)) {
-            setTimeout(() => previewPDFBytes(mergedPdfBytes), 500);
-        }
     } catch (error) {
         hideProgress();
         alert('合併失敗：' + error.message);
@@ -412,25 +403,27 @@ async function downloadSeparateFiles(unlockedFiles) {
     }
 
     hideProgress();
-
-    // 手機端自動預覽（僅單文件）
-    if (/Mobi|Android/i.test(navigator.userAgent) && unlockedFiles.length === 1) {
-        const pdfBytes = unlockedPdfs.get(unlockedFiles[0].id);
-        setTimeout(() => previewPDFBytes(pdfBytes), 500);
-    }
 }
 
 function downloadPDFBytes(pdfBytes, filename) {
     const blob = new Blob([pdfBytes], { type: 'application/pdf' });
     const url = URL.createObjectURL(blob);
 
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    // 手機端：在新分頁開啟（解決 LINE 瀏覽器問題）
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+        window.open(url, '_blank');
+        // 延遲釋放 URL
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } else {
+        // 桌面端：下載
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
 }
 
 function removeFile(fileId) {
@@ -465,59 +458,4 @@ function updateProgress(text, detail = '') {
 
 function hideProgress() {
     progressOverlay.style.display = 'none';
-}
-
-// 預覽事件監聽器
-closePreview.addEventListener('click', () => {
-    pdfPreview.style.display = 'none';
-    currentPreviewPdf = null;
-});
-
-prevPage.addEventListener('click', () => {
-    if (currentPreviewPage > 1) {
-        currentPreviewPage--;
-        renderPreviewPage();
-    }
-});
-
-nextPage.addEventListener('click', () => {
-    if (currentPreviewPdf && currentPreviewPage < currentPreviewPdf.numPages) {
-        currentPreviewPage++;
-        renderPreviewPage();
-    }
-});
-
-// 預覽函數
-async function previewPDFBytes(pdfBytes) {
-    try {
-        const loadingTask = pdfjsLib.getDocument({ data: pdfBytes });
-        currentPreviewPdf = await loadingTask.promise;
-        currentPreviewPage = 1;
-
-        pdfPreview.style.display = 'flex';
-        await renderPreviewPage();
-    } catch (error) {
-        alert('預覽失敗：' + error.message);
-    }
-}
-
-async function renderPreviewPage() {
-    if (!currentPreviewPdf) return;
-
-    const page = await currentPreviewPdf.getPage(currentPreviewPage);
-    const viewport = page.getViewport({ scale: 1.5 });
-
-    const canvas = pdfCanvas;
-    const context = canvas.getContext('2d');
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-
-    await page.render({
-        canvasContext: context,
-        viewport: viewport
-    }).promise;
-
-    pageInfo.textContent = `第 ${currentPreviewPage} 頁 / 共 ${currentPreviewPdf.numPages} 頁`;
-    prevPage.disabled = currentPreviewPage === 1;
-    nextPage.disabled = currentPreviewPage === currentPreviewPdf.numPages;
 }
