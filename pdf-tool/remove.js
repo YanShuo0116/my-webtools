@@ -91,7 +91,12 @@ function updateUI() {
 
     const hasLockedFiles = files.some(f => f.status === 'locked');
     const hasMultipleLockedFiles = files.filter(f => f.status === 'locked').length > 1;
+
+    // 只有多個加密文件時才顯示「統一密碼」區塊
     unifiedPasswordSection.style.display = (hasLockedFiles && hasMultipleLockedFiles) ? 'block' : 'none';
+
+    // 只有多個文件時才顯示「解鎖所有文件」按鈕
+    unlockAllBtn.style.display = (files.length > 1) ? 'flex' : 'none';
 
     const hasUnlockedFiles = files.some(f => f.status === 'unlocked');
     downloadModeSection.style.display = (hasUnlockedFiles && files.length > 1) ? 'flex' : 'none';
@@ -414,7 +419,7 @@ function downloadPDFBytes(pdfBytes, filename) {
     a.href = url;
     a.download = filename;
 
-    // 強制所有瀏覽器在新分頁開啟（嘗試解決 LINE 等通訊軟體內建瀏覽器的問題）
+
     a.target = '_blank';
 
     document.body.appendChild(a);
