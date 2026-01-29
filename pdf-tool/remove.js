@@ -1,3 +1,12 @@
+// 強制 LINE 瀏覽器使用外部瀏覽器開啟
+if (/Line/i.test(navigator.userAgent)) {
+    const currentUrl = window.location.href;
+    if (currentUrl.indexOf('openExternalBrowser=1') === -1) {
+        const separator = currentUrl.indexOf('?') === -1 ? '?' : '&';
+        window.location.href = currentUrl + separator + 'openExternalBrowser=1';
+    }
+}
+
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 let files = [];
